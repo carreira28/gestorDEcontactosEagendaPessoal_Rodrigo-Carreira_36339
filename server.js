@@ -2,7 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 
-
+const path = require("path");
+const fs = require("fs"); 
 const multer = require('multer')
 
 //const bcrypt = require("bcrypt");
@@ -24,12 +25,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
+app.use("/photos", express.static("photos"));
 
 const PORT = process.env.PORT || process.env.SERVER_PORT || 3000;
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'foto/');   
+        cb(null, 'photos/');   
     },
     filename: (req, file, cb) => {
         cb(null, Date.now() + path.extname(file.originalname)
@@ -60,16 +62,18 @@ app.post("/contacto", upload.single('foto') , async (req, res) => {
         return res.status(400).json({ message: "Email já existe" });
     }
     const newContact = await prisma.Contacto.create({
-        data: { nome, email, telefone, notas, groupId, foto: req.file ? req.file.path : null },
+        data: { nome, email, telefone, notas, groupId, foto: req.file ? `/photos/${req.file.filename}` : null },
     });
     res.status(201).json(newContact);
 });
 
+
+//! Atualizar o PUT
 app.put("/contacto/:id" , async (req, res) => {
     const { nome, email, telefone, notas, groupId } = req.body;
     const updatedContact = await prisma.Contacto.update({
         where: { id: req.params.id },
-        data: { nome, email, telefone },
+        //data: { nome, email, telefone, notas, groupId, foto: req.file ? },
     });
     res.status(200).json(updatedContact);
 });
