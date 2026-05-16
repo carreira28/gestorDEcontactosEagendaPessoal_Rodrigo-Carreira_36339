@@ -4,8 +4,6 @@ const morgan = require("morgan");
 
 
 const multer = require('multer')
-const path = require('path')
-
 
 //const bcrypt = require("bcrypt");
 //const jwt = require("jsonwebtoken");
@@ -34,7 +32,7 @@ const storage = multer.diskStorage({
         cb(null, 'foto/');   
     },
     filename: (req, file, cb) => {
-        cd(null, Date.now() + path.extname(file.originalname)
+        cb(null, Date.now() + path.extname(file.originalname)
     )}});
     const upload = multer({ storage });
 
