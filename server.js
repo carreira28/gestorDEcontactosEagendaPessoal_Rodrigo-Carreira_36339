@@ -3,8 +3,8 @@ const cors = require("cors");
 const morgan = require("morgan");
 
 const path = require("path");
-const fs = require("fs"); 
-const multer = require('multer')
+const fs = require("fs");
+const multer = require('multer');
 
 //const bcrypt = require("bcrypt");
 //const jwt = require("jsonwebtoken");
@@ -46,7 +46,7 @@ app.get("/contacto" , async (req, res) => {
 
 app.get("/contacto/:id" , async (req, res) => {
     const contacto = await prisma.Contacto.findUnique({
-        where: { id: req.params.id},
+        where: { id: Number(req.params.id)},
     });
     res.status(200).json(contacto);
 });
@@ -79,8 +79,17 @@ app.put("/contacto/:id" , async (req, res) => {
 });
 
 app.delete("/contacto/:id" , async (req, res) => {
+
+    const existeComtacto = await prisma.Contacto.findUnique({
+        where: { id: Number(req.params.id)},
+    });
+
+    if(!existeComtacto){
+        return res.status(400).json({ message: "ID não encontrado"})
+    }
+
     const deleteContact = await prisma.Contacto.delete({
-        where: { id: req.params.id},
+        where: { id: Number(req.params.id)},
     });
     res.status(204).send();
 });
