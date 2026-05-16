@@ -1,13 +1,29 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
 }
-modal contactos{
- id        String   @id @default(uuid())
- name      String
- 
+
+model Contacto {
+  id         Int      @id @default(autoincrement())
+  nome       String
+  telefone   String
+  email      String   @unique
+  foto       String?
+  notas      String?
+
+  groupId    Int?
+  group      Group?   @relation(fields: [groupId], references: [id])
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Group {
+  id         Int      @id @default(autoincrement())
+  nome       String
+
+  contactos  Contacto[]
 }
