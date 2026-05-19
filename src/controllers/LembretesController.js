@@ -11,7 +11,7 @@ const getAll = async (req, res, next) => {
 
 const getAllById = async (req, res, next) => {
     try{
-        const lembretes = await lembretesServices.getLembretesById (req.params.id,);
+        const lembretes = await lembretesServices.getLembretesById (req.params.id);
     if (!lembretes) {
       return res.status(404).json({ message: "Lembrete não encontrado" });
     }
