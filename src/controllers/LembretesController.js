@@ -26,7 +26,7 @@ const create = async (req, res, next) => {
         const newLembrete = await lembretesServices.createLembretes(req.body);
         return res.status(201).json(newLembrete);
     }catch (err){
-        if(err === 400){
+        if(err.status === 400){
             return res.status(400).json({ message: err.message});
         }
         next(err);
@@ -38,7 +38,7 @@ const update = async (req, res, next) => {
         const updateThisLembte = await lembretesServices.updateLembte(req.body, req.params.id,);
         return res.status(200).json(updateThisLembte);
     } catch (err){
-        if(err === 400){
+        if(err.status === 400){
             return res.status(400).json({ message: err.message});
         }
         next(err);
@@ -48,12 +48,13 @@ const update = async (req, res, next) => {
 
 const remove = async (req, res, next) => {
     try{
-        const deleteLembrete = await lembretesServices.deleteLembrete(req.body, req.params.id,);
+        const deleteLembrete = await lembretesServices.deleteLembrete(req.params.id,);
         return res.status(204).send();
     } catch (err){
-        if(err === 400){
+        if(err.status === 400){
             return res.status(400).json({ message: err.message});
         }
+        next(err);
     }
 };
 

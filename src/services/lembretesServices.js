@@ -18,7 +18,7 @@ const createLembretes = async (lembreteData) => {
     });
 };
 
-const updateLembte = async (id, lembreteData) => {
+const updateLembte = async (lembreteData, id) => {
     const { nome, descricao, data } = lembreteData;
 
     return await prisma.lembretes.update({
@@ -28,7 +28,7 @@ const updateLembte = async (id, lembreteData) => {
 };
 
 const deleteLembrete = async (id) => {
-    return await prisma.Contacto.findUnique({
+    const existeLembrete = await prisma.lembretes.findUnique({
     where: { id: Number(id) },
   });
 
