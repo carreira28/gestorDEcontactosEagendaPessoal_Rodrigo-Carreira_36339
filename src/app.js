@@ -4,6 +4,7 @@ const cors = require("cors");
 const morgan = require("morgan");
 const path = require("path");
 
+const AuthRoutes = require ("./routes/AuthRoutes");
 const contactoRoutes = require("./routes/contactoRoutes");
 const LembretesRoutes = require("./routes/LembretesRoutes")
 const GroupRoutes = require("./routes/GroupRoutes")
@@ -18,6 +19,7 @@ app.use(morgan("dev"));
 
 app.use("/photos", express.static(path.join(__dirname, "../photos")));
 
+app.use("/auth", AuthRoutes);
 app.use("/contacto", contactoRoutes);
 app.use("/lembrete", LembretesRoutes);
 app.use("/group", GroupRoutes);
