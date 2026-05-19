@@ -44,7 +44,7 @@ const update = async (req, res, next) => {
 
 const remove = async (req, res, next) => {
   try {
-    await contactoService.deleteContacto(req.params.id);
+    const apgarLembrete = await contactoService.deleteContacto(req.params.id, req.body, req.file);
     res.status(204).send();
   } catch (err) {
     if (err.status === 404) {

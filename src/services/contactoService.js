@@ -62,9 +62,23 @@ const deleteContacto = async (id) => {
     throw erro;
   }
 
+  const existeLembrete = await prisma.contacto.findUnique({
+    where: { id: Number(id)},
+    include: { lembretes: true},
+  });
+
+
+  if(existeLembrete){
+     const erro = new Error("Este contacto tem lembtes pendentes!");
+     erro.status = 404;
+    throw erro;
+  }
+
   return await prisma.Contacto.delete({
     where: { id: Number(id) },
   });
+
+
 };
 
 const ContactoLembrete = async (id) => {

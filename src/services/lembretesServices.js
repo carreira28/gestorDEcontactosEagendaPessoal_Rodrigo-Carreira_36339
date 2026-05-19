@@ -11,16 +11,41 @@ const getLembretesById = async (id) => {
 };
 
 const createLembretes = async (lembreteData) => {
-    const { nome, descricao, data,contactoId } = lembreteData;
+    const { nome, descricao, data, contactoId } = lembreteData;
 
     return await prisma.lembretes.create({
         data: { nome, descricao, data:  new Date(data), contactoId },
     });
 };
 
+const updateLembte = async (id, lembreteData) => {
+    const { nome, descricao, data } = lembreteData;
+
+    return await prisma.lembretes.update({
+        where: { id: Number(id)},
+        data: {  nome, descricao, data: new Date(data)},
+    });
+};
+
+const deleteLembrete = async (id) => {
+    return await prisma.Contacto.findUnique({
+    where: { id: Number(id) },
+  });
+
+  if (!existeLembrete) {
+    const erro = new Error("ID não encontrado");
+    erro.status = 404;
+    throw erro;
+  }
+    return await prisma.lembretes.delete({
+        where: { id: Number(id)},
+    });
+};
 
 module.exports = {
     getAlllembretes,
     getLembretesById,
     createLembretes,
+    updateLembte,
+    deleteLembrete,
 };
