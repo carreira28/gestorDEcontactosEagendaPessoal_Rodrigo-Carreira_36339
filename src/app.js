@@ -5,6 +5,8 @@ const morgan = require("morgan");
 const path = require("path");
 
 const contactoRoutes = require("./routes/contactoRoutes");
+const LembretesRoutes = require("./routes/LembretesRoutes")
+
 const { notFound, errorHandler } = require("./middlewares/errorHandler");
 
 const app = express();
@@ -16,6 +18,7 @@ app.use(morgan("dev"));
 app.use("/photos", express.static(path.join(__dirname, "../photos")));
 
 app.use("/contacto", contactoRoutes);
+app.use("/lembrete", LembretesRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

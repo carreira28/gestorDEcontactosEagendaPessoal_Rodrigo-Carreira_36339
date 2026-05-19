@@ -35,8 +35,7 @@ const createContacto = async (data, file) => {
   });
 };
 
-//! Atualizar o PUT (lógica de foto pendente)
-const updateContacto = async (id, data) => {
+const updateContacto = async (id, data, file) => {
   const { nome, email, telefone, notas, groupId } = data;
 
   return await prisma.Contacto.update({
@@ -47,6 +46,7 @@ const updateContacto = async (id, data) => {
       telefone,
       notas,
       groupId: groupId ? Number(groupId) : null,
+      foto: file ? `/photos/${file.filename}` : undefined,
     },
   });
 };
@@ -67,10 +67,18 @@ const deleteContacto = async (id) => {
   });
 };
 
+const ContactoLembrete = async (id) => {
+  return await prisma.contacto.findUnique({
+    where: { id: Number(id)},
+    include: { lembretes: true},
+  });
+}
+
 module.exports = {
   getAllContactos,
   getContactoById,
   createContacto,
   updateContacto,
   deleteContacto,
+  ContactoLembrete,
 };

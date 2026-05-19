@@ -35,7 +35,7 @@ const create = async (req, res, next) => {
 
 const update = async (req, res, next) => {
   try {
-    const updatedContacto = await contactoService.updateContacto(req.params.id, req.body);
+    const updatedContacto = await contactoService.updateContacto(req.params.id, req.body, req.file);
     res.status(200).json(updatedContacto);
   } catch (err) {
     next(err);
@@ -54,4 +54,17 @@ const remove = async (req, res, next) => {
   }
 };
 
-module.exports = { getAll, getById, create, update, remove };
+const searchLembresteBYContacto = async (req, res, next) => {
+  try {
+    const data = await contactoService.ContactoLembrete(req.params.id);
+
+    return res.json(data);
+  } catch (err) {
+    if (err.status === 400) {
+      return res.status(400).json({ message: err.message });
+    }
+    next(err);
+  }
+};
+
+module.exports = { getAll, getById, create, update, remove, searchLembresteBYContacto};
