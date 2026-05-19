@@ -6,6 +6,18 @@ datasource db {
   provider = "postgresql"
 }
 
+model User {
+  id        String     @id @default(uuid())
+  name      String
+  email     String     @unique
+  password  String
+  contactos Contacto[]
+  groups    Group[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+
 model Contacto {
   id         Int      @id @default(autoincrement())
   nome       String
@@ -13,6 +25,9 @@ model Contacto {
   email      String   @unique
   foto       String?
   notas      String?
+
+  userId    String
+  user      User       @relation(fields: [userId], references: [id])
 
   groupId    Int?
   group      Group?   @relation(fields: [groupId], references: [id])
@@ -26,7 +41,7 @@ model Contacto {
 model lembretes {
   id          Int      @id @default(autoincrement())
   nome        String
-  descricao   String?
+  descricao   String? 
   data        DateTime @db.Date
 
   contactoId  Int
@@ -40,5 +55,10 @@ model Group {
   id         Int      @id @default(autoincrement())
   nome       String
 
+ userId    String
+  user      User       @relation(fields: [userId], references: [id])
+
   contactos  Contacto[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 }
