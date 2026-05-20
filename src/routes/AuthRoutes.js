@@ -4,6 +4,7 @@ const router = express.Router();
 const AuthController = require("../controllers/AuthController");
 const upload = require("../middlewares/upload");
 
-router.post("/:id", AuthController.signup);
+router.post("/signup", AuthController.signup);
+router.post("/signin", AuthController.signin);
 
 module.exports = router;

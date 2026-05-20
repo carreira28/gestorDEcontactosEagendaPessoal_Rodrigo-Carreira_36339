@@ -2,12 +2,13 @@ const express = require("express");
 const router = express.Router();
 
 const LembretesController = require("../controllers/LembretesController");
+const authenticateToken = require("../middlewares/errorHandler");
 
 
-router.get("/", LembretesController.getAll);
-router.get("/:id", LembretesController.getAllById);
-router.post("/", LembretesController.create);
-router.put("/:id",LembretesController.update);
-router.delete("/:id", LembretesController.remove);
+router.get("/", authenticateToken, LembretesController.getAll);
+router.get("/:id", authenticateToken, LembretesController.getAllById);
+router.post("/", authenticateToken, LembretesController.create);
+router.put("/:id", authenticateToken, LembretesController.update);
+router.delete("/:id", authenticateToken, LembretesController.remove);
 
 module.exports = router;

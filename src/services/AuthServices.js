@@ -11,8 +11,8 @@ const signup = async (data) => {
 
     if(existeUser){
         const error = new Error("Email já registado");
-        err.status = 400;
-        throw err;
+        error.status = 400;
+        throw error;
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -27,8 +27,34 @@ const signup = async (data) => {
 const signin = async (data) => {
     const {email, password} = data; 
 
+    const existeUser = await prisma.User.findUnique({
+        where: { email },
+    });
+
+    if(!existeUser){
+        const error = new Error("Email invalido!");
+        error.status = 400;
+        throw error;
+    }
+
+    const validarPassword = await bcrypt.compare(password, existeUser.password);
+
+    if(!validarPassword){
+        const error = new Error("Password invalida!");
+        error.status = 400;
+        throw error;
+    }
+
+    const token = jwt.sign(
+        {id: existeUser.id, email: existeUser.email},
+        process.env.JWT_SECRET,
+        {expiresIn: "1h"}
+    );
+
+    return {token};
     
-}
+};
 module.exports = {
     signup,
+    signin,
 }
