@@ -17,7 +17,7 @@ export default function Login() {
     try {
       const res = await request("POST", "/auth/signin", form);
       localStorage.setItem("token", res.token);
-      navigate("/contactos");
+      navigate("/grupos");
     } catch (err) {
       setErro(err.message || "Erro ao fazer login");
     }

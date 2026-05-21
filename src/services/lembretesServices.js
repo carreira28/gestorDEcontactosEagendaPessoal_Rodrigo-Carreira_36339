@@ -1,35 +1,48 @@
 const prisma = require("../prisma/client");
 
-const getAlllembretes = async () => {
-    return await prisma.lembretes.findMany();
+const getAlllembretes = async (userId) => {
+  return await prisma.lembretes.findMany({
+    where: { userId },
+  });
 };
 
-const getLembretesById = async (id) => {
-    return await prisma.lembretes.findUnique({
-        where: { id: Number(id)},
-    });
+const getLembretesById = async (id, userId) => {
+  return await prisma.lembretes.findUnique({
+    where: { id: Number(id), userId },
+  });
 };
 
-const createLembretes = async (lembreteData) => {
-    const { nome, descricao, data, contactoId } = lembreteData;
+const getLembretesProximos7Dias = async (userId) => {
+  const hoje = new Date();
+  const daqui7dias = new Date();
+  daqui7dias.setDate(hoje.getDate() + 7);
 
-    return await prisma.lembretes.create({
-        data: { nome, descricao, data:  new Date(data), contactoId },
-    });
+  return await prisma.lembretes.findMany({
+    where: {
+      userId,
+      data: { gte: hoje, lte: daqui7dias },
+    },
+  });
 };
 
-const updateLembte = async (lembreteData, id) => {
-    const { nome, descricao, data } = lembreteData;
-
-    return await prisma.lembretes.update({
-        where: { id: Number(id)},
-        data: {  nome, descricao, data: new Date(data)},
-    });
+const createLembretes = async (lembreteData, userId) => {
+  const { nome, descricao, data, contactoId } = lembreteData;
+  return await prisma.lembretes.create({
+    data: { nome, descricao, data: new Date(data), contactoId, userId },
+  });
 };
 
-const deleteLembrete = async (id) => {
-    const existeLembrete = await prisma.lembretes.findUnique({
-    where: { id: Number(id) },
+const updateLembte = async (lembreteData, id, userId) => {
+  const { nome, descricao, data } = lembreteData;
+  return await prisma.lembretes.update({
+    where: { id: Number(id), userId },
+    data: { nome, descricao, data: new Date(data) },
+  });
+};
+
+const deleteLembrete = async (id, userId) => {
+  const existeLembrete = await prisma.lembretes.findUnique({
+    where: { id: Number(id), userId },
   });
 
   if (!existeLembrete) {
@@ -37,28 +50,17 @@ const deleteLembrete = async (id) => {
     erro.status = 404;
     throw erro;
   }
-    return await prisma.lembretes.delete({
-        where: { id: Number(id)},
-    });
-};
 
-const getLembretesProximos7Dias = async () => {
-  const hoje = new Date();
-  const daqui7dias = new Date();
-  daqui7dias.setDate(hoje.getDate() + 7);
-
-  return await prisma.lembretes.findMany({
-    where: {
-      data: { gte: hoje, lte: daqui7dias }
-    }
+  return await prisma.lembretes.delete({
+    where: { id: Number(id), userId },
   });
 };
 
 module.exports = {
-    getAlllembretes,
-    getLembretesById,
-    createLembretes,
-    updateLembte,
-    deleteLembrete,
-    getLembretesProximos7Dias,
+  getAlllembretes,
+  getLembretesById,
+  getLembretesProximos7Dias,
+  createLembretes,
+  updateLembte,
+  deleteLembrete,
 };

@@ -5,7 +5,7 @@ const AuthController = require("../controllers/AuthController");
 const upload = require("../middlewares/upload");
 const authenticateToken = require("../middlewares/authenticate");
 
-//router.get("/", authenticateToken, AuthController.getALLUser);
+router.get("/", authenticateToken, AuthController.getALLUser);
 router.post("/signup", AuthController.signup);
 router.post("/signin", AuthController.signin);
 

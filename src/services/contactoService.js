@@ -1,7 +1,9 @@
 const prisma = require("../prisma/client");
 
-const getAllContactos = async () => {
-  return await prisma.Contacto.findMany();
+const getAllContactos = async (userId) => {
+  return await prisma.Contacto.findMany({
+    where: { userId },
+  });
 };
 
 const getContactoById = async (id) => {

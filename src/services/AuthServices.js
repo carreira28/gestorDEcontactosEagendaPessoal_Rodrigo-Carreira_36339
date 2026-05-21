@@ -55,13 +55,13 @@ const signin = async (data) => {
     
 };
 
-/*const ListarUser = async () => {
+const ListarUser = async () => {
     
     return await prisma.User.findMany();
-};*/
+};
 
 module.exports = {
     signup,
     signin,
-    //ListarUser,
+    ListarUser,
 }
