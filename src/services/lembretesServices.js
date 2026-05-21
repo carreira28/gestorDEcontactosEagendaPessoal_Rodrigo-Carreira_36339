@@ -42,10 +42,23 @@ const deleteLembrete = async (id) => {
     });
 };
 
+const getLembretesProximos7Dias = async () => {
+  const hoje = new Date();
+  const daqui7dias = new Date();
+  daqui7dias.setDate(hoje.getDate() + 7);
+
+  return await prisma.lembretes.findMany({
+    where: {
+      data: { gte: hoje, lte: daqui7dias }
+    }
+  });
+};
+
 module.exports = {
     getAlllembretes,
     getLembretesById,
     createLembretes,
     updateLembte,
     deleteLembrete,
+    getLembretesProximos7Dias,
 };

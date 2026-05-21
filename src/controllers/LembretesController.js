@@ -58,10 +58,20 @@ const remove = async (req, res, next) => {
     }
 };
 
+const get7dias = async (req, res, next) => {
+    try{
+        const getAlllembretes7dias = await lembretesServices.getLembretesProximos7Dias();
+    res.status(200).json(getAlllembretes7dias);
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
     getAll,
     getAllById,
     create,
     update,
     remove,
+    get7dias,
 };

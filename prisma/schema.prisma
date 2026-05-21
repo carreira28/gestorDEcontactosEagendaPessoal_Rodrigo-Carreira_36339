@@ -26,11 +26,11 @@ model Contacto {
   foto       String?
   notas      String?
 
-  userId    String?     // colocar obrigatorio
-  user      User?       @relation(fields: [userId], references: [id])     // colocar obrigatorio
+  userId    String     
+  user      User       @relation(fields: [userId], references: [id])     
 
-  groupId    Int?      // colocar obrigatorio
-  group      Group?   @relation(fields: [groupId], references: [id])     // colocar obrigatorio
+  groupId    Int
+  group      Group   @relation(fields: [groupId], references: [id])    
 
   lembretes  lembretes[]
 
@@ -55,8 +55,8 @@ model Group {
   id         Int      @id @default(autoincrement())
   nome       String
 
- userId    String?        // colocar obrigatorio
-  user      User?       @relation(fields: [userId], references: [id])    // colocar obrigatorio
+ userId    String
+  user      User       @relation(fields: [userId], references: [id])
 
   contactos  Contacto[]
   createdAt DateTime   @default(now())

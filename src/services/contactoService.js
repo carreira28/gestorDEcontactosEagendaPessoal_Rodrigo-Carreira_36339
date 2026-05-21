@@ -62,7 +62,7 @@ const deleteContacto = async (id) => {
     throw erro;
   }
 
-  const existeLembrete = await prisma.contacto.findUnique({
+  const existeLembrete = await prisma.Contacto.findUnique({
     where: { id: Number(id)},
     include: { lembretes: true},
   });

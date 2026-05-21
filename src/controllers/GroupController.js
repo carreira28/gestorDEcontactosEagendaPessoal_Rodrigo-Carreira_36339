@@ -13,10 +13,10 @@ const getAllById = async (req, res, next) => {
     try{
         const Group = await GroupService.getGroupById(req.params.id);
         return res.status(200).json(Group);
-        if (!Group) {
+    } catch(err){
+    if (!Group) {
       return res.status(404).json({ message: "Grupo não encontrado" });
     }
-    } catch(err){
         next(err);
     }
 };
