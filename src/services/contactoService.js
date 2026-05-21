@@ -11,7 +11,7 @@ const getContactoById = async (id) => {
 };
 
 const createContacto = async (data, file) => {
-  const { nome, email, telefone, notas, groupId } = data;
+  const { nome, email, telefone, notas, groupId, userId } = data;
 
   const existeEmail = await prisma.Contacto.findUnique({
     where: { email },
@@ -29,6 +29,7 @@ const createContacto = async (data, file) => {
       email,
       telefone,
       notas,
+      userId,
       groupId: groupId ? Number(groupId) : null,
       foto: file ? `/photos/${file.filename}` : null,
     },
@@ -52,8 +53,9 @@ const updateContacto = async (id, data, file) => {
 };
 
 const deleteContacto = async (id) => {
-  const existeContacto = await prisma.Contacto.findUnique({
+  const existeContacto = await prisma.contacto.findUnique({
     where: { id: Number(id) },
+    include: { lembretes: true },
   });
 
   if (!existeContacto) {
@@ -62,23 +64,15 @@ const deleteContacto = async (id) => {
     throw erro;
   }
 
-  const existeLembrete = await prisma.Contacto.findUnique({
-    where: { id: Number(id)},
-    include: { lembretes: true},
-  });
-
-
-  if(existeLembrete){
-     const erro = new Error("Este contacto tem lembtes pendentes!");
-     erro.status = 404;
+  if (existeContacto.lembretes.length > 0) {
+    const erro = new Error("Este contacto tem lembretes pendentes!");
+    erro.status = 400;
     throw erro;
   }
 
-  return await prisma.Contacto.delete({
+  return await prisma.contacto.delete({
     where: { id: Number(id) },
   });
-
-
 };
 
 const ContactoLembrete = async (id) => {
@@ -86,7 +80,19 @@ const ContactoLembrete = async (id) => {
     where: { id: Number(id)},
     include: { lembretes: true},
   });
-}
+};
+
+const searchContactos = async (query) => {
+  const { nome, email, groupId } = query;
+
+  return await prisma.Contacto.findMany({
+    where: {
+      ...(nome && { nome: { contains: nome, mode: 'insensitive' } }),
+      ...(email && { email: { contains: email, mode: 'insensitive' } }),
+      ...(groupId && { groupId: Number(groupId) }),
+    }
+  });
+};
 
 module.exports = {
   getAllContactos,
@@ -95,4 +101,5 @@ module.exports = {
   updateContacto,
   deleteContacto,
   ContactoLembrete,
+  searchContactos,
 };

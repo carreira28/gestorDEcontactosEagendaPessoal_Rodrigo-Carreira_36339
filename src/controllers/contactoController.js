@@ -67,4 +67,13 @@ const searchLembresteBYContacto = async (req, res, next) => {
   }
 };
 
-module.exports = { getAll, getById, create, update, remove, searchLembresteBYContacto};
+const searchCont = async (req, res, next) => {
+  try {
+    const contactos = await contactoService.searchContactos(req.query);
+    res.status(200).json(contactos);
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { getAll, getById, create, update, remove, searchLembresteBYContacto, searchCont};
