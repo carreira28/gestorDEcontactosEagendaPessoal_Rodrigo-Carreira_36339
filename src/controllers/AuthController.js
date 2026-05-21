@@ -35,7 +35,18 @@ const signin = async (req, res, next) => {
         next(err);
     }
 };
+
+/*const getALLUser = async (req, res, next) => {
+    try{
+        const User = await AuthServices.ListarUser();
+        return res.status(200).json(User);
+    } catch (err){
+        next(err);
+    }
+};*/
+
 module.exports = {
     signup,
     signin,
+    //getALLUser,
 }

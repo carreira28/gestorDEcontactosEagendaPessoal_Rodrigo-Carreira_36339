@@ -54,7 +54,14 @@ const signin = async (data) => {
     return {token};
     
 };
+
+/*const ListarUser = async () => {
+    
+    return await prisma.User.findMany();
+};*/
+
 module.exports = {
     signup,
     signin,
+    //ListarUser,
 }

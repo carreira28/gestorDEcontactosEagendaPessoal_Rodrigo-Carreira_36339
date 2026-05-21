@@ -30,7 +30,7 @@ const createContacto = async (data, file) => {
       telefone,
       notas,
       userId,
-      groupId: groupId ? Number(groupId) : null,
+      groupId: Number(groupId),
       foto: file ? `/photos/${file.filename}` : null,
     },
   });
@@ -46,7 +46,7 @@ const updateContacto = async (id, data, file) => {
       email,
       telefone,
       notas,
-      groupId: groupId ? Number(groupId) : null,
+      groupId: groupId ? Number(groupId) : undefined,
       foto: file ? `/photos/${file.filename}` : undefined,
     },
   });
