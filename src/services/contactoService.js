@@ -33,7 +33,7 @@ const createContacto = async (data, file) => {
       notas,
       userId,
       groupId: Number(groupId),
-      foto: file ? `/photos/${file.filename}` : null,
+      foto: file ? file.path : null,
     },
   });
 };
@@ -49,7 +49,7 @@ const updateContacto = async (id, data, file) => {
       telefone,
       notas,
       groupId: groupId ? Number(groupId) : undefined,
-      foto: file ? `/photos/${file.filename}` : undefined,
+      foto: file ? file.path : undefined,
     },
   });
 };
