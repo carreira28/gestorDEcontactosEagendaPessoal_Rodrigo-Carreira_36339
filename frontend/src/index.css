@@ -11,8 +11,6 @@ body {
   min-height: 100vh;
 }
 
-/* ───── AUTH (Login / Registo) ───── */
-
 .auth-container {
   min-height: 100vh;
   display: flex;
@@ -104,8 +102,6 @@ body {
   font-size: 0.9rem;
 }
 
-/* ───── LAYOUT GERAL (após login) ───── */
-
 .layout {
   display: flex;
   min-height: 100vh;
@@ -148,16 +144,12 @@ body {
   padding: 2rem;
 }
 
-/* ───── CARDS ───── */
-
 .card {
   background: white;
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
-
-/* ───── BOTÕES ───── */
 
 .btn {
   padding: 0.6rem 1.2rem;
@@ -187,8 +179,6 @@ body {
   background: #feb2b2;
 }
 
-/* ───── INPUTS GERAIS ───── */
-
 input, select, textarea {
   padding: 0.7rem 1rem;
   border: 1.5px solid #e2e8f0;
@@ -202,8 +192,6 @@ input, select, textarea {
 input:focus, select:focus, textarea:focus {
   border-color: #667eea;
 }
-
-/* ───── RESPONSIVO ───── */
 
 @media (max-width: 768px) {
   .layout {
