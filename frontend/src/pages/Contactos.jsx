@@ -7,6 +7,7 @@ export default function Contactos() {
   const navigate = useNavigate();
   const [contactos, setContactos] = useState([]);
   const [lembretes, setLembretes] = useState([]);
+  const [novoNome,{/*Continual de pois (email, telefone, ...*/}, setNovoContacto] = useState("");
   const [erro, setErro] = useState("");
 
   useEffect(() => {
@@ -27,6 +28,16 @@ export default function Contactos() {
     try {
       const data = await request("GET", `/contacto/search?groupId=${id}`);
       setContactos(data);
+    } catch (err) {
+      setErro(err.message);
+    }
+  };
+  const criar = async () => {
+    if (!novoNome.trim()) return;
+    try {
+      await request("POST", "/contacto", { nome: novoNome });
+      setNovoContacto("");
+      carregarContactos();
     } catch (err) {
       setErro(err.message);
     }
@@ -63,14 +74,40 @@ export default function Contactos() {
 
         {erro && <p className="erro">{erro}</p>}
 
+        <div className="card" style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem" }}>
+          <input
+            type="text"
+            placeholder="Nome do novo contacto..."
+            value={novoNome}
+            onChange={(e) => setNovoContacto(e.target.value)}
+          />
+          <button className="btn btn-primary" onClick={criar}>Criar</button>
+        </div>
+
         {contactos.length === 0 && <p>Nenhum contacto neste grupo.</p>}
 
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           {contactos.map((c) => (
-            <div key={c.id} className="card">
-              <strong>{c.nome}</strong>
-              <p>{c.email}</p>
-              <p>{c.telefone}</p>
+            <div key={c.id} className="card" style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+              {c.foto && (
+                <img
+                  src={c.foto}
+                  alt={c.nome}
+                  style={{
+                    width: 56,
+                    height: 56,
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                    flexShrink: 0,
+                    border: "2px solid #e2e8f0",
+                  }}
+                />
+              )}
+              <div>
+                <strong>{c.nome}</strong>
+                <p>{c.email}</p>
+                <p>{c.telefone}</p>
+              </div>
             </div>
           ))}
         </div>
