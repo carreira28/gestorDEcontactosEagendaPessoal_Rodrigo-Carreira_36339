@@ -6,25 +6,25 @@ export default function Contactos() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [contactos, setContactos] = useState([]);
-  const [lembretes, setLembretes] = useState([]);
+  const [lembretes, setReminders] = useState([]);
   const [novoNome,{/*Continual de pois (email, telefone, ...*/}, setNovoContacto] = useState("");
   const [erro, setErro] = useState("");
 
   useEffect(() => {
-    carregarContactos();
-    carregarLembretes();
+    loadContacts();
+    loadReminders();
   }, [id]);
 
-  const carregarLembretes = async () => {
+  const loadReminders = async () => {
     try{
     const data = await request("GET", "/lembrete/proximos/7dias");
-    setLembretes(data);
+    setReminders(data);
     }catch (err) {
         console.error(err);
     }
   };
 
-  const carregarContactos = async () => {
+  const loadContacts = async () => {
     try {
       const data = await request("GET", `/contacto/search?groupId=${id}`);
       setContactos(data);
@@ -32,12 +32,12 @@ export default function Contactos() {
       setErro(err.message);
     }
   };
-  const criar = async () => {
+  const create = async () => {
     if (!novoNome.trim()) return;
     try {
       await request("POST", "/contacto", { nome: novoNome });
-      setNovoContacto("");
-      carregarContactos();
+      setNewContacto("");
+      loadContacts();
     } catch (err) {
       setErro(err.message);
     }
@@ -79,9 +79,9 @@ export default function Contactos() {
             type="text"
             placeholder="Nome do novo contacto..."
             value={novoNome}
-            onChange={(e) => setNovoContacto(e.target.value)}
+            onChange={(e) => setNewContacto(e.target.value)}
           />
-          <button className="btn btn-primary" onClick={criar}>Criar</button>
+          <button className="btn btn-primary" onClick={create}>Criar</button>
         </div>
 
         {contactos.length === 0 && <p>Nenhum contacto neste grupo.</p>}

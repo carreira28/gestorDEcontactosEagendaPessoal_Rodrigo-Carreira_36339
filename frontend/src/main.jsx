@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Registo from "./pages/Registo";
 import Grupos from "./pages/Grupos";
-import Contactos  from "./pages/Contactos";
+import Contactos  from "./pages/Contacts";
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
