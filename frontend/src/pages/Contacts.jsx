@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { request } from "../api/api";
 
-export default function Contactos() {
+export default function Contacts() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [contactos, setContactos] = useState([]);
-  const [lembretes, setReminders] = useState([]);
-  const [novoNome,{/*Continual de pois (email, telefone, ...*/}, setNovoContacto] = useState("");
-  const [erro, setErro] = useState("");
+  const [contacts, setContacts] = useState([]);
+  const [reminders, setReminders] = useState([]);
+  const [newName, setNewName] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     loadContacts();
@@ -16,30 +16,31 @@ export default function Contactos() {
   }, [id]);
 
   const loadReminders = async () => {
-    try{
-    const data = await request("GET", "/lembrete/proximos/7dias");
-    setReminders(data);
-    }catch (err) {
-        console.error(err);
+    try {
+      const data = await request("GET", "/lembrete/proximos/7dias");
+      setReminders(data);
+    } catch (err) {
+      console.error(err);
     }
   };
 
   const loadContacts = async () => {
     try {
       const data = await request("GET", `/contacto/search?groupId=${id}`);
-      setContactos(data);
+      setContacts(data);
     } catch (err) {
-      setErro(err.message);
+      setError(err.message);
     }
   };
+
   const create = async () => {
-    if (!novoNome.trim()) return;
+    if (!newName.trim()) return;
     try {
-      await request("POST", "/contacto", { nome: novoNome });
-      setNewContacto("");
+      await request("POST", "/contacto", { nome: newName });
+      setNewName("");
       loadContacts();
     } catch (err) {
-      setErro(err.message);
+      setError(err.message);
     }
   };
 
@@ -48,10 +49,10 @@ export default function Contactos() {
       <aside className="sidebar">
         <h1>Lembretes para os próximos 7 dias</h1>
         <div style={{ marginTop: "2rem" }}>
-          {lembretes.length === 0 && (
+          {reminders.length === 0 && (
             <p style={{ fontSize: "0.8rem", color: "#a0aec0" }}>Sem lembretes.</p>
           )}
-          {lembretes.map((l) => (
+          {reminders.map((l) => (
             <div key={l.id} style={{
               background: "#ebf4ff",
               borderRadius: 8,
@@ -64,30 +65,30 @@ export default function Contactos() {
             </div>
           ))}
         </div>
-
-        <button className="btn btn-danger" onClick={() => navigate("/grupos")} style={{ marginTop: "auto" }}>
+        <button className="btn btn-danger" onClick={() => navigate("/groups")} style={{ marginTop: "auto" }}>
           Voltar
         </button>
       </aside>
+
       <main className="conteudo">
         <h2 style={{ margin: "1.5rem 0" }}>Contactos do Grupo</h2>
 
-        {erro && <p className="erro">{erro}</p>}
+        {error && <p className="erro">{error}</p>}
 
         <div className="card" style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem" }}>
           <input
             type="text"
             placeholder="Nome do novo contacto..."
-            value={novoNome}
-            onChange={(e) => setNewContacto(e.target.value)}
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
           />
           <button className="btn btn-primary" onClick={create}>Criar</button>
         </div>
 
-        {contactos.length === 0 && <p>Nenhum contacto neste grupo.</p>}
+        {contacts.length === 0 && <p>Nenhum contacto neste grupo.</p>}
 
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          {contactos.map((c) => (
+          {contacts.map((c) => (
             <div key={c.id} className="card" style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
               {c.foto && (
                 <img

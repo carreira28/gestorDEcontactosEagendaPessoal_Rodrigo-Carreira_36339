@@ -2,10 +2,10 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { request } from "../api/api";
 
-export default function Login() {
+export default function Register() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ email: "", password: "" });
-  const [erro, setErro] = useState("");
+  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -13,31 +13,31 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErro("");
+    setError("");
     try {
-      const res = await request("POST", "/auth/signin", form);
-      localStorage.setItem("token", res.token);
-      navigate("/grupos");
+      await request("POST", "/auth/signup", form);
+      navigate("/login");
     } catch (err) {
-      setErro(err.message || "Erro ao fazer login");
+      setError(err.message || "Erro ao registar");
     }
   };
 
 return (
   <div className="auth-container">
     <div className="auth-card">
-      <h2>Bem-vindo</h2>
+      <h2>Criar conta</h2>
       <br></br>
-      {erro && <p className="erro">{erro}</p>}
+      {error && <p className="erro">{error}</p>}
       <form onSubmit={handleSubmit}>
+        <span>Nome</span>
+        <input name="name" type="text" placeholder="Nome Completo" onChange={handleChange} required />
         <span>Email</span>
         <input name="email" type="email" placeholder="Exemplo@gmail.com" onChange={handleChange} required />
-        
         <span>Password</span>
         <input name="password" type="password" placeholder="Password" onChange={handleChange} required />
-        <button type="submit">Entrar</button>
+        <button type="submit">Registar</button>
       </form>
-      <p className="link-texto">Não tens conta? <Link to="/registo">Regista-te</Link></p>
+      <p className="link-texto">Já tens conta? <Link to="/login">Faz login</Link></p>
     </div>
   </div>
 );

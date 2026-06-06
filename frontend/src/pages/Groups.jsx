@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { request } from "../api/api";
 
-export default function Grupos() {
+export default function Groups() {
   const navigate = useNavigate();
   const [groups, setGroups] = useState([]);
-  const [Reminders, setReminders] = useState([]);
-  const [newName, setNovoNome] = useState("");
+  const [reminders, setReminders] = useState([]);
+  const [newName, setNewName] = useState("");
   const [editing, setEditing] = useState(null);
-  const [erro, setErro] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     loadGroups();
-    loadReminders(); 
+    loadReminders();
   }, []);
 
   const loadReminders = async () => {
@@ -29,28 +29,28 @@ export default function Grupos() {
       const data = await request("GET", "/group");
       setGroups(data);
     } catch (err) {
-      setErro(err.message);
+      setError(err.message);
     }
   };
 
   const create = async () => {
-    if (!novoNome.trim()) return;
+    if (!newName.trim()) return;
     try {
-      await request("POST", "/group", { nome: novoNome });
+      await request("POST", "/group", { nome: newName });
       setNewName("");
       loadGroups();
     } catch (err) {
-      setErro(err.message);
+      setError(err.message);
     }
   };
 
   const save = async (id) => {
     try {
-      await request("PUT", `/group/${id}`, { nome: editando.nome });
-      setEditando(null);
-      carregarGrupos();
+      await request("PUT", `/group/${id}`, { nome: editing.nome });
+      setEditing(null);
+      loadGroups();
     } catch (err) {
-      setErro(err.message);
+      setError(err.message);
     }
   };
 
@@ -58,9 +58,9 @@ export default function Grupos() {
     if (!confirm("Tens a certeza?")) return;
     try {
       await request("DELETE", `/group/${id}`);
-      carregarGrupos();
+      loadGroups();
     } catch (err) {
-      setErro(err.message);
+      setError(err.message);
     }
   };
 
@@ -74,10 +74,10 @@ export default function Grupos() {
       <aside className="sidebar">
         <h1>Lembretes para os próximos 7 dias</h1>
         <div style={{ marginTop: "2rem" }}>
-          {Reminders.length === 0 && (
+          {reminders.length === 0 && (
             <p style={{ fontSize: "0.8rem", color: "#a0aec0" }}>Sem lembretes.</p>
           )}
-          {Reminders.map((l) => (
+          {reminders.map((l) => (
             <div key={l.id} style={{
               background: "#ebf4ff",
               borderRadius: 8,
@@ -90,7 +90,6 @@ export default function Grupos() {
             </div>
           ))}
         </div>
-
         <button className="btn btn-danger" onClick={logout} style={{ marginTop: "auto" }}>
           Sair
         </button>
@@ -99,7 +98,7 @@ export default function Grupos() {
       <main className="conteudo">
         <h2 style={{ marginBottom: "1.5rem" }}>Grupos</h2>
 
-        {erro && <p className="erro">{erro}</p>}
+        {error && <p className="erro">{error}</p>}
 
         <div className="card" style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem" }}>
           <input
@@ -128,7 +127,7 @@ export default function Grupos() {
               ) : (
                 <>
                   <span style={{ flex: 1, fontWeight: 600, fontSize: "1rem" }}>{g.nome}</span>
-                  <button className="btn btn-primary" onClick={() => navigate(`/grupos/${g.id}`)}>
+                  <button className="btn btn-primary" onClick={() => navigate(`/groups/${g.id}`)}>
                     Ver Contactos
                   </button>
                   <button className="btn btn-primary" onClick={() => setEditing(g)}>Editar</button>
