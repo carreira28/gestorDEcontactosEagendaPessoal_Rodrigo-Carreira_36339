@@ -56,10 +56,17 @@ const deleteLembrete = async (id, userId) => {
   });
 };
 
+const getLembretesByContacto = async (contactoId, userId) => {
+  return await prisma.lembretes.findMany({
+    where: { contactoId: Number(contactoId), userId },
+  });
+};
+
 module.exports = {
   getAlllembretes,
   getLembretesById,
   getLembretesProximos7Dias,
+  getLembretesByContacto,
   createLembretes,
   updateLembte,
   deleteLembrete,

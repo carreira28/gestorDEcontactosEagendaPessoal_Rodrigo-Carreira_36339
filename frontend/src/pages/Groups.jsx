@@ -54,15 +54,25 @@ export default function Groups() {
     }
   };
 
-  const eliminate = async (id) => {
-    if (!confirm("Tens a certeza?")) return;
-    try {
-      await request("DELETE", `/group/${id}`);
-      loadGroups();
-    } catch (err) {
-      setError(err.message);
+const eliminate = async (id) => {
+  if (!confirm("Tens a certeza que queres eliminar este grupo?")) return;
+  try {
+    const token = localStorage.getItem("token");
+    const res = await fetch(`http://localhost:4242/group/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (res.status !== 204 && !res.ok) {
+      const data = await res.json();
+      throw new Error(data.message || "Erro ao eliminar grupo");
     }
-  };
+
+    loadGroups();
+  } catch (err) {
+    setError(err.message);
+  }
+};
 
   const logout = () => {
     localStorage.removeItem("token");

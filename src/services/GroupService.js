@@ -28,6 +28,24 @@ const updateGroup = async (data, id, userId) => {
 };
 
 const deleteGroup = async (id, userId) => {
+
+  const existegrupo = await prisma.Group.findUnique({
+    where: {id: Number(id)},
+    include: {contactos: true},
+  });
+
+  if(!existegrupo) {
+    const erro = new Error("ID não encontrado");
+    erro.status = 404;
+    throw erro;
+  }
+
+    if (existegrupo.contactos.length > 0) {
+    const erro = new Error("Este grupo tem contactos pendentes!");
+    erro.status = 400;
+    throw erro;
+  }
+
   return await prisma.Group.delete({
     where: { id: Number(id), userId },
   });

@@ -9,14 +9,11 @@ export default function Contacts() {
   const [contacts, setContacts] = useState([]);
   const [reminders, setReminders] = useState([]);
   const [error, setError] = useState("");
+  const [editing, setEditing] = useState(null);
+  const [editPreview, setEditPreview] = useState("");
   const [newContact, setNewContact] = useState({
-  nome: "",
-  email: "",
-  telefone: "",
-  notas: "",
-  foto: null,
-  fotoPreview: "",
-});
+    nome: "", email: "", telefone: "", notas: "", foto: null, fotoPreview: "",
+  });
 
   useEffect(() => {
     loadContacts();
@@ -25,7 +22,7 @@ export default function Contacts() {
 
   const loadReminders = async () => {
     try {
-      const data = await request("GET", "/lembrete/proximos/7dias");
+      const data = await request("GET", "/lembrete");
       setReminders(data);
     } catch (err) {
       console.error(err);
@@ -55,59 +52,99 @@ export default function Contacts() {
     }));
   };
 
-const create = async () => {
-  if (!newContact.nome.trim()) return;
-  try {
-    const formData = new FormData();
-    formData.append("nome", newContact.nome);
-    formData.append("email", newContact.email);
-    formData.append("telefone", newContact.telefone);
-    formData.append("notas", newContact.notas);
-    formData.append("groupId", id);
-    if (newContact.foto) formData.append("foto", newContact.foto);
-
-    const token = localStorage.getItem("token");
-    const res = await fetch("http://localhost:4242/contacto", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-      body: formData,
-    });
-
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || "Erro ao criar contacto");
-
-    setNewContact({ nome: "", email: "", telefone: "", notas: "", foto: null, fotoPreview: "" });
-    loadContacts();
-  } catch (err) {
-    setError(err.message);
-  }
-};
-
-  const eliminate = async (id) => {
-    if (!confirm("Tens a certeza?")) return;
+  const create = async () => {
+    if (!newContact.nome.trim()) return;
     try {
-      await request("DELETE", `/contacto/${id}`);
+      const formData = new FormData();
+      formData.append("nome", newContact.nome);
+      formData.append("email", newContact.email);
+      formData.append("telefone", newContact.telefone);
+      formData.append("notas", newContact.notas);
+      formData.append("groupId", id);
+      if (newContact.foto) formData.append("foto", newContact.foto);
+
+      const token = localStorage.getItem("token");
+      const res = await fetch("http://localhost:4242/contacto", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Erro ao criar contacto");
+
+      setNewContact({ nome: "", email: "", telefone: "", notas: "", foto: null, fotoPreview: "" });
       loadContacts();
     } catch (err) {
       setError(err.message);
     }
   };
 
+const eliminate = async (contactId) => {
+  if (!confirm("Tens a certeza que queres eliminar este contacto?")) return;
+  try {
+    await request("DELETE", `/contacto/${contactId}`);
+    loadContacts();
+  } catch (err) {
+    setError(err.message);
+  }
+};
+
+const startEdit = (c) => {
+  setEditing({ ...c, novaFoto: null });
+  setEditPreview(c.foto || "");
+};
+  const handleEditChange = (e) => {
+    setEditing({ ...editing, [e.target.name]: e.target.value });
+  };
+
+  const handleEditPhoto = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setEditing((prev) => ({ ...prev, novaFoto: file }));
+    setEditPreview(URL.createObjectURL(file));
+  };
+
+  const saveEdit = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("nome", editing.nome);
+      formData.append("email", editing.email);
+      formData.append("telefone", editing.telefone);
+      formData.append("notas", editing.notas || "");
+      if (editing.novaFoto) formData.append("foto", editing.novaFoto);
+
+      const token = localStorage.getItem("token");
+      const res = await fetch(`http://localhost:4242/contacto/${editing.id}`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Erro ao editar contacto");
+
+      setEditing(null);
+      setEditPreview("");
+      loadContacts();
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+
   return (
     <div className="layout">
       <aside className="sidebar">
-        <h1>Lembretes para os próximos 7 dias</h1>
+        <h1>Histórico de lembretes</h1>
         <div style={{ marginTop: "2rem" }}>
           {reminders.length === 0 && (
             <p style={{ fontSize: "0.8rem", color: "#a0aec0" }}>Sem lembretes.</p>
           )}
           {reminders.map((l) => (
             <div key={l.id} style={{
-              background: "#ebf4ff",
-              borderRadius: 8,
-              padding: "0.5rem 0.75rem",
-              marginBottom: "0.5rem",
-              fontSize: "0.82rem"
+              background: "#ebf4ff", borderRadius: 8,
+              padding: "0.5rem 0.75rem", marginBottom: "0.5rem", fontSize: "0.82rem"
             }}>
               <strong>{l.nome}</strong>
               <p style={{ color: "#718096" }}>{new Date(l.data).toLocaleDateString("pt-PT")}</p>
@@ -131,45 +168,35 @@ const create = async () => {
             style={{ width: 56, height: 56, borderRadius: "50%", objectFit: "cover", border: "2px solid #e2e8f0", flexShrink: 0 }}
           />
           <label className="btn btn-primary" style={{ cursor: "pointer", flexShrink: 0 }}>
-            <input type="file" accept="image/*" onChange={handlePhoto} style={{ display: "none" }} />
             Foto
+            <input type="file" accept="image/*" onChange={handlePhoto} style={{ display: "none" }} />
           </label>
-          <input
-            name="nome"
-            type="text"
-            placeholder="Nome"
-            value={newContact.nome}
-            onChange={handleChange}
-            style={{ flex: 1, minWidth: 120 }}
-          />
-          <input
-            name="email"
-            type="email"
-            placeholder="Email"
-            value={newContact.email}
-            onChange={handleChange}
-            style={{ flex: 1, minWidth: 120 }}
-          />
-          <input
-            name="telefone"
-            type="tel"
-            placeholder="Telefone"
-            value={newContact.telefone}
-            onChange={handleChange}
-            style={{ flex: 1, minWidth: 100 }}
-          />
-          <input
-            name="notas"
-            type="text"
-            placeholder="Notas (Opcional)"
-            value={newContact.notas}
-            onChange={handleChange}
-            style={{ flex: 2, minWidth: 120 }}
-          />
-          <button className="btn btn-primary" onClick={create} style={{ flexShrink: 0 }}>
-            Criar
-          </button>
+          <input name="nome" type="text" placeholder="Nome" value={newContact.nome} onChange={handleChange} style={{ flex: 1, minWidth: 120 }} />
+          <input name="email" type="email" placeholder="Email" value={newContact.email} onChange={handleChange} style={{ flex: 1, minWidth: 120 }} />
+          <input name="telefone" type="tel" placeholder="Telefone" value={newContact.telefone} onChange={handleChange} style={{ flex: 1, minWidth: 100 }} />
+          <input name="notas" type="text" placeholder="Notas (opcional)" value={newContact.notas} onChange={handleChange} style={{ flex: 2, minWidth: 120 }} />
+          <button className="btn btn-primary" onClick={create} style={{ flexShrink: 0 }}>Criar</button>
         </div>
+
+        {editing && (
+          <div className="card" style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.5rem", flexWrap: "wrap", border: "2px solid #667eea" }}>
+            <img
+              src={editPreview || iconProfile}
+              alt="preview"
+              style={{ width: 56, height: 56, borderRadius: "50%", objectFit: "cover", border: "2px solid #e2e8f0", flexShrink: 0 }}
+            />
+            <label className="btn btn-primary" style={{ cursor: "pointer", flexShrink: 0 }}>
+              Foto
+              <input type="file" accept="image/*" onChange={handleEditPhoto} style={{ display: "none" }} />
+            </label>
+            <input name="nome" type="text" placeholder="Nome *" value={editing.nome} onChange={handleEditChange} style={{ flex: 1, minWidth: 120 }} />
+            <input name="email" type="email" placeholder="Email" value={editing.email} onChange={handleEditChange} style={{ flex: 1, minWidth: 120 }} />
+            <input name="telefone" type="tel" placeholder="Telefone" value={editing.telefone} onChange={handleEditChange} style={{ flex: 1, minWidth: 100 }} />
+            <input name="notas" type="text" placeholder="Notas (opcional)" value={editing.notas || ""} onChange={handleEditChange} style={{ flex: 2, minWidth: 120 }} />
+            <button className="btn btn-primary" onClick={saveEdit} style={{ flexShrink: 0 }}>Guardar</button>
+            <button className="btn" onClick={() => setEditing(null)} style={{ flexShrink: 0 }}>Cancelar</button>
+          </div>
+        )}
 
         {contacts.length === 0 && <p>Nenhum contacto neste grupo.</p>}
 
@@ -179,18 +206,20 @@ const create = async () => {
               <img
                 src={c.foto || iconProfile}
                 alt={c.nome}
-                style={{ width: 56, height: 56, borderRadius: "50%", objectFit: "cover", border: "2px solid #e2e8f0" }}
+                style={{ width: 56, height: 56, borderRadius: "50%", objectFit: "cover", border: "2px solid #e2e8f0", flexShrink: 0 }}
               />
-              <div>
-                <strong>{c.nome}</strong>
-                {c.email && <p>{c.email}</p>}
-                {c.telefone && <p>{c.telefone}</p>}
-                {c.notas && <p style={{ color: "#718096", fontSize: "0.85rem" }}>{c.notas}</p>}
-              </div>
-                  <button className="btn btn-danger" onClick={() => eliminate(g.id)}>Eliminar</button>
+            <div style={{ flex: 1 }}>
+              <strong>{c.nome}</strong>
+              {c.email && <p>{c.email}</p>}
+              {c.telefone && <p>{c.telefone}</p>}
+              {c.notas && <p style={{ color: "#718096", fontSize: "0.85rem" }}>{c.notas}</p>}
             </div>
-          ))}
-        </div>
+      <button className="btn btn-primary" onClick={() => navigate(`/contacts/${c.id}/reminders`)}>Lembretes</button>
+      <button className="btn btn-primary" onClick={() => startEdit(c)}>Editar</button>
+      <button className="btn btn-danger" onClick={() => eliminate(c.id)}>Eliminar</button>
+    </div>
+  ))}
+</div>
       </main>
     </div>
   );

@@ -7,6 +7,7 @@ const authenticateToken = require("../middlewares/authenticate");
 
 router.get("/", authenticateToken, LembretesController.getAll);
 router.get("/proximos/7dias", authenticateToken, LembretesController.get7dias);
+router.get("/contacto/:contactoId", authenticateToken, LembretesController.getByContacto);
 router.get("/:id", authenticateToken, LembretesController.getAllById);
 router.post("/", authenticateToken, LembretesController.create);
 router.put("/:id", authenticateToken, LembretesController.update);

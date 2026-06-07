@@ -51,5 +51,11 @@ const remove = async (req, res, next) => {
     next(err);
   }
 };
+const getByContacto = async (req, res, next) => {
+  try {
+    const lembretes = await lembretesServices.getLembretesByContacto(req.params.contactoId, req.user.id);
+    res.status(200).json(lembretes);
+  } catch (err) { next(err); }
+};
 
-module.exports = { getAll, getAllById, get7dias, create, update, remove };
+module.exports = { getAll, getAllById, get7dias, create, update, remove, getByContacto };

@@ -12,6 +12,8 @@ export const request = async (method, endpoint, body = null) => {
     ...(body && { body: JSON.stringify(body) }),
   });
 
+    if (res.status === 204) return null;
+
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || "Erro");
   return data;
