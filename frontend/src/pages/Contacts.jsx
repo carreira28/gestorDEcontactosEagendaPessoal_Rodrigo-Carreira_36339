@@ -1,14 +1,22 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { request } from "../api/api";
+import iconProfile from "../../photos/iconprofile.jpg";
 
 export default function Contacts() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [contacts, setContacts] = useState([]);
   const [reminders, setReminders] = useState([]);
-  const [newName, setNewName] = useState("");
   const [error, setError] = useState("");
+  const [newContact, setNewContact] = useState({
+  nome: "",
+  email: "",
+  telefone: "",
+  notas: "",
+  foto: null,
+  fotoPreview: "",
+});
 
   useEffect(() => {
     loadContacts();
@@ -33,11 +41,52 @@ export default function Contacts() {
     }
   };
 
-  const create = async () => {
-    if (!newName.trim()) return;
+  const handleChange = (e) => {
+    setNewContact({ ...newContact, [e.target.name]: e.target.value });
+  };
+
+  const handlePhoto = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setNewContact((prev) => ({
+      ...prev,
+      foto: file,
+      fotoPreview: URL.createObjectURL(file),
+    }));
+  };
+
+const create = async () => {
+  if (!newContact.nome.trim()) return;
+  try {
+    const formData = new FormData();
+    formData.append("nome", newContact.nome);
+    formData.append("email", newContact.email);
+    formData.append("telefone", newContact.telefone);
+    formData.append("notas", newContact.notas);
+    formData.append("groupId", id);
+    if (newContact.foto) formData.append("foto", newContact.foto);
+
+    const token = localStorage.getItem("token");
+    const res = await fetch("http://localhost:4242/contacto", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || "Erro ao criar contacto");
+
+    setNewContact({ nome: "", email: "", telefone: "", notas: "", foto: null, fotoPreview: "" });
+    loadContacts();
+  } catch (err) {
+    setError(err.message);
+  }
+};
+
+  const eliminate = async (id) => {
+    if (!confirm("Tens a certeza?")) return;
     try {
-      await request("POST", "/contacto", { nome: newName });
-      setNewName("");
+      await request("DELETE", `/contacto/${id}`);
       loadContacts();
     } catch (err) {
       setError(err.message);
@@ -71,18 +120,55 @@ export default function Contacts() {
       </aside>
 
       <main className="conteudo">
-        <h2 style={{ margin: "1.5rem 0" }}>Contactos do Grupo</h2>
+        <h2 style={{ marginBottom: "1.5rem" }}>Contactos do Grupo</h2>
 
         {error && <p className="erro">{error}</p>}
 
-        <div className="card" style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem" }}>
-          <input
-            type="text"
-            placeholder="Nome do novo contacto..."
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
+        <div className="card" style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.5rem", flexWrap: "wrap" }}>
+          <img
+            src={newContact.fotoPreview || iconProfile}
+            alt="preview"
+            style={{ width: 56, height: 56, borderRadius: "50%", objectFit: "cover", border: "2px solid #e2e8f0", flexShrink: 0 }}
           />
-          <button className="btn btn-primary" onClick={create}>Criar</button>
+          <label className="btn btn-primary" style={{ cursor: "pointer", flexShrink: 0 }}>
+            <input type="file" accept="image/*" onChange={handlePhoto} style={{ display: "none" }} />
+            Foto
+          </label>
+          <input
+            name="nome"
+            type="text"
+            placeholder="Nome"
+            value={newContact.nome}
+            onChange={handleChange}
+            style={{ flex: 1, minWidth: 120 }}
+          />
+          <input
+            name="email"
+            type="email"
+            placeholder="Email"
+            value={newContact.email}
+            onChange={handleChange}
+            style={{ flex: 1, minWidth: 120 }}
+          />
+          <input
+            name="telefone"
+            type="tel"
+            placeholder="Telefone"
+            value={newContact.telefone}
+            onChange={handleChange}
+            style={{ flex: 1, minWidth: 100 }}
+          />
+          <input
+            name="notas"
+            type="text"
+            placeholder="Notas (Opcional)"
+            value={newContact.notas}
+            onChange={handleChange}
+            style={{ flex: 2, minWidth: 120 }}
+          />
+          <button className="btn btn-primary" onClick={create} style={{ flexShrink: 0 }}>
+            Criar
+          </button>
         </div>
 
         {contacts.length === 0 && <p>Nenhum contacto neste grupo.</p>}
@@ -90,25 +176,18 @@ export default function Contacts() {
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           {contacts.map((c) => (
             <div key={c.id} className="card" style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-              {c.foto && (
-                <img
-                  src={c.foto}
-                  alt={c.nome}
-                  style={{
-                    width: 56,
-                    height: 56,
-                    borderRadius: "50%",
-                    objectFit: "cover",
-                    flexShrink: 0,
-                    border: "2px solid #e2e8f0",
-                  }}
-                />
-              )}
+              <img
+                src={c.foto || iconProfile}
+                alt={c.nome}
+                style={{ width: 56, height: 56, borderRadius: "50%", objectFit: "cover", border: "2px solid #e2e8f0" }}
+              />
               <div>
                 <strong>{c.nome}</strong>
-                <p>{c.email}</p>
-                <p>{c.telefone}</p>
+                {c.email && <p>{c.email}</p>}
+                {c.telefone && <p>{c.telefone}</p>}
+                {c.notas && <p style={{ color: "#718096", fontSize: "0.85rem" }}>{c.notas}</p>}
               </div>
+                  <button className="btn btn-danger" onClick={() => eliminate(g.id)}>Eliminar</button>
             </div>
           ))}
         </div>

@@ -23,7 +23,10 @@ const getById = async (req, res, next) => {
 
 const create = async (req, res, next) => {
   try {
-    const newContacto = await contactoService.createContacto(req.body, req.file);
+    const newContacto = await contactoService.createContacto(
+      { ...req.body, userId: req.user.id },
+      req.file
+    );
     res.status(201).json(newContacto);
   } catch (err) {
     if (err.status === 400) {
