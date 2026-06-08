@@ -1,4 +1,5 @@
-const prisma = require("../prisma/client");
+const prisma = require("@prisma/client");
+const prisma = new PrismaClient();
 
 const getAllGroups = async (userId) => {
   return await prisma.Group.findMany({
