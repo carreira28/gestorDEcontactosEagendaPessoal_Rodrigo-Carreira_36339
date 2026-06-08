@@ -8,7 +8,7 @@ const PORT = process.env.PORT || process.env.SERVER_PORT || 3000;
 
 if (process.env.NODE_ENV !== "production") {
   app.listen(PORT, () => {
-    console.log(`✅ Servidor a correr em http://localhost:${PORT}`);
+    console.log(`Servidor a correr em http://localhost:${PORT}`);
   });
 }
 
