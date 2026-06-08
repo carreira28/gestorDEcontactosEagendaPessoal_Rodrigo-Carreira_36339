@@ -11,6 +11,7 @@ export default function Contacts() {
   const [error, setError] = useState("");
   const [editing, setEditing] = useState(null);
   const [editPreview, setEditPreview] = useState("");
+  const [search, setSearch] = useState("");
   const [newContact, setNewContact] = useState({
     nome: "", email: "", telefone: "", notas: "", foto: null, fotoPreview: "",
   });
@@ -132,6 +133,10 @@ const startEdit = (c) => {
     }
   };
 
+  const filtered = contacts.filter((c) =>
+    c.nome.toLowerCase().includes(search.toLowerCase()) ||
+    c.email.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="layout">
@@ -198,10 +203,18 @@ const startEdit = (c) => {
           </div>
         )}
 
-        {contacts.length === 0 && <p>Nenhum contacto neste grupo.</p>}
+        <input
+          type="text"
+          placeholder="Pesquisar por nome ou email..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          style={{ marginBottom: "1rem", width: "100%" }}
+        />
+
+        {filtered.length === 0 && <p>Nenhum contacto encontrado.</p>}
 
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          {contacts.map((c) => (
+          {filtered.map((c) => (
             <div key={c.id} className="card" style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
               <img
                 src={c.foto || iconProfile}
