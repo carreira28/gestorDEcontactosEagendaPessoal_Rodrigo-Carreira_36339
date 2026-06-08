@@ -48,7 +48,4 @@ npm run dev
 
 # 4. Instalar e iniciar o frontend
 
-cd frontend
--
-npm install
-npm run dev
+| cd frontend | npm install | npm run dev |
