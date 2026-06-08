@@ -37,15 +37,25 @@ Aplicação de gestão de contactos pessoais com grupos, notas e um sistema simp
 # Instalação e execução
 
 # 1. Instalar dependências do backend
+
+# 1.1.
 npm install
 
-# 2. Criar as tabelas na base de dados
+# 1.2.
 npx prisma migrate dev
 
-# 3. Iniciar o backend
+# 1.3.
 npm run dev
 
+---
 
-# 4. Instalar e iniciar o frontend
+# 2. Instalar e iniciar o frontend
 
-| cd frontend | npm install | npm run dev |
+# 4.1
+cd frontend 
+ 
+# 4.2.
+npm install
+
+# 4.3.
+npm run dev
