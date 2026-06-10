@@ -9,7 +9,7 @@ const signup = async (data) => {
         where: { email },
     });
 
-    if(existeUser){
+    if (existeUser) {
         const error = new Error("Email já registado");
         error.status = 400;
         throw error;
@@ -18,50 +18,44 @@ const signup = async (data) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await prisma.user.create({
-        data: { name, email, password: hashedPassword},
+        data: { name, email, password: hashedPassword },
     });
 
-    return{ id: newUser.id, name: newUser.name, email: newUser.email};
+    return { id: newUser.id, name: newUser.name, email: newUser.email };
 };
 
 const signin = async (data) => {
-    const {email, password} = data; 
+    const { email, password } = data;
 
     const existeUser = await prisma.user.findUnique({
         where: { email },
     });
 
-    if(!existeUser){
-        const error = new Error("Email invalido!");
+    if (!existeUser) {
+        const error = new Error("Email inválido!");
         error.status = 400;
         throw error;
     }
 
     const validarPassword = await bcrypt.compare(password, existeUser.password);
 
-    if(!validarPassword){
-        const error = new Error("Password invalida!");
+    if (!validarPassword) {
+        const error = new Error("Password inválida!");
         error.status = 400;
         throw error;
     }
 
     const token = jwt.sign(
-        {id: existeUser.id, email: existeUser.email},
+        { id: existeUser.id, email: existeUser.email },
         process.env.JWT_SECRET,
-        {expiresIn: "1h"}
+        { expiresIn: "1h" }
     );
 
-    return {token};
-    
+    return { token };
 };
 
 const ListarUser = async () => {
-    
     return await prisma.user.findMany();
 };
 
-module.exports = {
-    signup,
-    signin,
-    ListarUser,
-}
+module.exports = { signup, signin, ListarUser };
