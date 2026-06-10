@@ -17,7 +17,7 @@ const signup = async (data) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = await prisma.User.create({
+    const newUser = await prisma.user.create({
         data: { name, email, password: hashedPassword},
     });
 
@@ -27,7 +27,7 @@ const signup = async (data) => {
 const signin = async (data) => {
     const {email, password} = data; 
 
-    const existeUser = await prisma.User.findUnique({
+    const existeUser = await prisma.user.findUnique({
         where: { email },
     });
 
@@ -57,7 +57,7 @@ const signin = async (data) => {
 
 const ListarUser = async () => {
     
-    return await prisma.User.findMany();
+    return await prisma.user.findMany();
 };
 
 module.exports = {
