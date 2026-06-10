@@ -3,6 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { request } from "../api/api";
 import iconProfile from "../../photos/iconprofile.jpg";
 
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4242";
+
 export default function Contacts() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -65,7 +67,7 @@ export default function Contacts() {
       if (newContact.foto) formData.append("foto", newContact.foto);
 
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:4242/contacto", {
+      const res = await fetch(`${BASE_URL}/contacto`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
@@ -116,7 +118,7 @@ const startEdit = (c) => {
       if (editing.novaFoto) formData.append("foto", editing.novaFoto);
 
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:4242/contacto/${editing.id}`, {
+      const res = await fetch(`${BASE_URL}/contacto/${editing.id}`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,

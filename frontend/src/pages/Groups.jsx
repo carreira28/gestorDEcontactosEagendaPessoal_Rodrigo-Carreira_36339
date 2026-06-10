@@ -10,6 +10,8 @@ export default function Groups() {
   const [editing, setEditing] = useState(null);
   const [error, setError] = useState("");
 
+  const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4242";
+
   useEffect(() => {
     loadGroups();
     loadReminders();
@@ -58,7 +60,7 @@ const eliminate = async (id) => {
   if (!confirm("Tens a certeza que queres eliminar este grupo?")) return;
   try {
     const token = localStorage.getItem("token");
-    const res = await fetch(`http://localhost:4242/group/${id}`, {
+    const res = await fetch(`${BASE_URL}/group/${id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });
