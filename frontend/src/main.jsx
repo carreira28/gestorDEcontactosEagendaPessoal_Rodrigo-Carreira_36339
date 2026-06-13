@@ -6,6 +6,7 @@ import Register from "./pages/Register";
 import Groups from "./pages/Groups";
 import Contacts from "./pages/Contacts";
 import Reminders from "./pages/Reminders";
+import Erro from './pages/Erro';
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -18,6 +19,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/groups" element={<Groups />} />
         <Route path="/groups/:id" element={<Contacts />} />
         <Route path="/contacts/:contactoId/reminders" element={<Reminders />} />
+        <Route path='*' element={<Erro/>}/>
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

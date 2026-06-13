@@ -196,7 +196,7 @@ const startEdit = (c) => {
               Foto
               <input type="file" accept="image/*" onChange={handleEditPhoto} style={{ display: "none" }} />
             </label>
-            <input name="nome" type="text" placeholder="Nome *" value={editing.nome} onChange={handleEditChange} style={{ flex: 1, minWidth: 120 }} />
+            <input name="nome" type="text" placeholder="Nome" value={editing.nome} onChange={handleEditChange} style={{ flex: 1, minWidth: 120 }} />
             <input name="email" type="email" placeholder="Email" value={editing.email} onChange={handleEditChange} style={{ flex: 1, minWidth: 120 }} />
             <input name="telefone" type="tel" placeholder="Telefone" value={editing.telefone} onChange={handleEditChange} style={{ flex: 1, minWidth: 100 }} />
             <input name="notas" type="text" placeholder="Notas (opcional)" value={editing.notas || ""} onChange={handleEditChange} style={{ flex: 2, minWidth: 120 }} />

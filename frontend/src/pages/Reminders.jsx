@@ -157,7 +157,7 @@ export default function Reminders() {
             <input
               name="nome"
               type="text"
-              placeholder="Nome *"
+              placeholder="Nome"
               value={editing.nome}
               onChange={handleEditChange}
               style={{ flex: 2, minWidth: 150 }}
