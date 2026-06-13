@@ -108,24 +108,34 @@ const startEdit = (c) => {
     setEditPreview(URL.createObjectURL(file));
   };
 
-  const saveEdit = async () => {
-    try {
-      const formData = new FormData();
-      formData.append("nome", editing.nome);
-      formData.append("email", editing.email);
-      formData.append("telefone", editing.telefone);
-      formData.append("notas", editing.notas || "");
-      if (editing.novaFoto) formData.append("foto", editing.novaFoto);
+const saveEdit = async () => {
+  try {
+    const formData = new FormData();
+    formData.append("nome", editing.nome);
+    formData.append("email", editing.email);
+    formData.append("telefone", editing.telefone);
+    formData.append("notas", editing.notas || "");
+    if (editing.novaFoto) formData.append("foto", editing.novaFoto);
 
-      await request("PUT", `/contacto/${editing.id}`, formData);
+    const token = localStorage.getItem("token");
+    const res = await fetch(`${BASE_URL}/contacto/${editing.id}`, {
+      method: "PUT",
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    });
 
-      setEditing(null);
-      setEditPreview("");
-      loadContacts();
-    } catch (err) {
-      setError(err.message);
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.message || "Erro ao editar contacto");
     }
-  };
+
+    setEditing(null);
+    setEditPreview("");
+    loadContacts();
+  } catch (err) {
+    setError(err.message);
+  }
+};
 
   const filtered = contacts.filter((c) =>
     c.nome.toLowerCase().includes(search.toLowerCase()) ||
