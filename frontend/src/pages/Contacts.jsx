@@ -3,6 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { request } from "../api/api";
 import iconProfile from "../../photos/iconprofile.jpg";
 
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4242";
+
 export default function Contacts() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -53,7 +55,7 @@ export default function Contacts() {
     }));
   };
 
-  const create = async () => {
+const create = async () => {
     if (!newContact.nome.trim()) return;
     try {
       const formData = new FormData();
@@ -64,7 +66,15 @@ export default function Contacts() {
       formData.append("groupId", id);
       if (newContact.foto) formData.append("foto", newContact.foto);
 
-      await request("POST", "/contacto", formData);
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${BASE_URL}/contacto`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Erro ao criar contacto");
 
       setNewContact({ nome: "", email: "", telefone: "", notas: "", foto: null, fotoPreview: "" });
       loadContacts();
