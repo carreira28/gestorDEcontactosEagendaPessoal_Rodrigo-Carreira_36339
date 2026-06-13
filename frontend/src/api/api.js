@@ -14,7 +14,9 @@ export const request = async (method, endpoint, body = null) => {
 
     if (res.status === 204) return null;
 
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.message || "Erro");
+  const text = await res.text();
+    if (!text) return null;
+  const data = JSON.parse(text);
+    if (!res.ok) throw new Error(data.message || "Erro");
   return data;
 };
