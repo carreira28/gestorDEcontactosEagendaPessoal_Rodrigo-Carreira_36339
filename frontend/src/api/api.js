@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.SERVER_PORT || "http://localhost:4242";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4242";
 
 export const request = async (method, endpoint, body = null) => {
   const token = localStorage.getItem("token");
