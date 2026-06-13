@@ -3,8 +3,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { request } from "../api/api";
 import iconProfile from "../../photos/iconprofile.jpg";
 
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4242";
-
 export default function Contacts() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -66,15 +64,7 @@ export default function Contacts() {
       formData.append("groupId", id);
       if (newContact.foto) formData.append("foto", newContact.foto);
 
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${BASE_URL}/contacto`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Erro ao criar contacto");
+      await request("POST", "/contacto", formData);
 
       setNewContact({ nome: "", email: "", telefone: "", notas: "", foto: null, fotoPreview: "" });
       loadContacts();
@@ -117,15 +107,7 @@ const startEdit = (c) => {
       formData.append("notas", editing.notas || "");
       if (editing.novaFoto) formData.append("foto", editing.novaFoto);
 
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${BASE_URL}/contacto/${editing.id}`, {
-        method: "PUT",
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Erro ao editar contacto");
+      await request("PUT", `/contacto/${editing.id}`, formData);
 
       setEditing(null);
       setEditPreview("");

@@ -216,3 +216,31 @@ input:focus, select:focus, textarea:focus {
     padding: 1rem;
   }
 }
+.not-found-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.not-found-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 1rem;
+  padding: 3rem 2rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  max-width: 480px;  
+  width: 100%;
+}
+
+.not-found {
+  font-size: 6rem;
+  font-weight: 800;
+  color: #ff0000;
+  line-height: 1;
+  letter-spacing: -4px;
+}
