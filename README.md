@@ -1,61 +1,80 @@
 # Gestor de Contactos e Agenda Pessoal
 
-Aplicação de gestão de contactos pessoais com grupos, notas e um sistema simples de lembretes por data.
+Aplicação web de gestão de contactos pessoais com suporte a grupos, notas, upload de foto e um sistema de lembretes por data.
 
 ---
 
-# Tecnologias utilizadas
+## Tecnologias utilizadas
 
-# Backend
-| Biblioteca | Versão | Função |
-|---|---|---|
-| express | ^5.2.1 | Framework HTTP |
-| @prisma/client | ^7.8.0 | ORM para base de dados |
-| prisma | ^7.8.0 | CLI e migrations |
-| pg | ^8.20.0 | Driver PostgreSQL |
-| jsonwebtoken | ^9.0.3 | Autenticação JWT |
-| bcrypt | ^6.0.0 | Hash de passwords |
-| multer | ^2.1.1 | Upload de ficheiros |
-| cloudinary | ^1.41.3 | Armazenamento de imagens na cloud |
-| multer-storage-cloudinary | ^4.0.0 | Integração multer + Cloudinary |
-| cors | ^2.8.6 | Cross-Origin Resource Sharing |
-| dotenv | ^17.4.2 | Variáveis de ambiente |
-| morgan | ^1.10.1 | Logging de pedidos HTTP |
-| nodemon | ^3.1.14 | Reinício automático em desenvolvimento |
+### Backend
+| Biblioteca | Versão |
+|---|---|
+| express | ^5.2.1 |
+| @prisma/client | ^7.8.0 |
+| prisma | ^7.8.0 |
+| pg | ^8.20.0 |
+| jsonwebtoken | ^9.0.3 |
+| bcrypt | ^6.0.0 |
+| multer | ^2.1.1 |
+| cloudinary | ^1.41.3 |
+| multer-storage-cloudinary | ^4.0.0 |
+| cors | ^2.8.6 |
+| dotenv | ^17.4.2 |
+| morgan | ^1.10.1 |
+| nodemon | ^3.1.14 |
 
-# Frontend
-| Biblioteca | Versão | Função |
-|---|---|---|
-| react | ^19.2.6 | Framework UI |
-| react-dom | ^19.2.6 | Renderização DOM |
-| react-router-dom | ^7.15.1 | Navegação entre páginas |
-| axios | ^1.16.1 | Cliente HTTP |
-| vite | ^8.0.12 | Bundler e servidor de desenvolvimento |
+### Frontend
+| Biblioteca | Versão |
+|---|---|
+| react |
+| react-dom | ^19.2.6 |
+| react-router-dom | ^7.15.1 |
+| vite | ^8.0.12 |
 
 ---
 
-# Instalação e execução
+## Variáveis de ambiente
 
-# 1. Instalar dependências do backend
+Cria um ficheiro `.env` na raiz do projeto com base no `.env.example`:
 
-# 1.1.
+```env
+DATABASE_URL=postgresql://usuario:password@localhost:5432/nome_da_base
+JWT_SECRET=o_teu_segredo
+CLOUDINARY_CLOUD_NAME=...
+CLOUDINARY_API_KEY=...
+CLOUDINARY_API_SECRET=...
+```
+
+---
+
+## Instalação e execução
+
+### Backend
+
+```bash
+# 1. Instalar dependências
 npm install
 
-# 1.2.
+# 2. Criar as tabelas na base de dados
 npx prisma migrate dev
 
-# 1.3.
+# 3. Iniciar o servidor
 npm run dev
+```
 
----
+O servidor fica disponível em `http://localhost:4242`.
 
-# 2. Instalar e iniciar o frontend
+### Frontend
 
-# 4.1
-cd frontend 
- 
-# 4.2.
+```bash
+# 1. Entrar na pasta do frontend
+cd frontend
+
+# 2. Instalar dependências
 npm install
 
-# 4.3.
+# 3. Iniciar a aplicação
 npm run dev
+```
+
+A aplicação fica disponível em `http://localhost:5173`.
